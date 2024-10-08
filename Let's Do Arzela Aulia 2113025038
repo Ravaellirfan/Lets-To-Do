@@ -1,0 +1,130 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool showLogo = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Timer untuk menyembunyikan logo setelah 5 detik
+    Timer(Duration(seconds: 5), () {
+      setState(() {
+        showLogo = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.yellow,
+        body: Center(
+          child: showLogo
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Let's Do",
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 20),
+              Icon(
+                Icons.check_box,
+                size: 80,
+                color: Colors.green,
+              ),
+            ],
+          )
+              : NotesPage(), // Setelah 5 detik, tampilkan halaman Notes
+        ),
+      ),
+    );
+  }
+}
+
+class NotesPage extends StatefulWidget {
+  @override
+  _NotesPageState createState() => _NotesPageState();
+}
+
+class _NotesPageState extends State<NotesPage> {
+  List<String> notes = []; // List untuk menyimpan catatan
+  TextEditingController noteController = TextEditingController();
+
+  void addNote() {
+    setState(() {
+      if (noteController.text.isNotEmpty) {
+        notes.add(noteController.text);
+        noteController.clear();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Let's Do"),
+        backgroundColor: Colors.yellow[700],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: noteController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter a note...',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: addNote,
+                  child: Text("Add"),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(notes[index]),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      setState(() {
+                        notes.removeAt(index);
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
